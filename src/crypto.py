@@ -59,14 +59,13 @@ def decryptStorage(store_path, encKey):
         data = data + decryptor.finalize().decode()
     return json.loads(data)
 
-def encryptStorage(db_json, store_path, encKey, iv): #TODO put file writing in main
+def encryptStorage(string, encKey, iv): 
     cipherkey = bytes.fromhex(encKey)
     cipher = Cipher(algorithms.AES(cipherkey), modes.GCM(iv), backend=default_backend())
     encryptor = cipher.encryptor()
-    cipherText = encryptor.update(json.dumps(db_json).encode("UTF-8", "replace")) + encryptor.finalize()
+    cipherText = encryptor.update(string.encode("UTF-8", "replace")) + encryptor.finalize()
     cipherText = iv + encryptor.tag + cipherText
-    with open(store_path, 'wb') as f:
-        f.write(cipherText)
+    return cipherText
             
 def generatePassword(length):
     chars = (string.digits + string.ascii_letters + string.punctuation)

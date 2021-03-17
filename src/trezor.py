@@ -19,11 +19,19 @@ BIP32_PATH = parse_path("10016h/0")
 class TrezorDevice:
     client = None
 
+   
     def __getClient(self):
         if self.client is None:
             devices = self.__waitForDevices()
             transport = self.__chooseDevice(devices)
             self.client = TrezorClient(transport=transport, ui=ui.ClickUI())
+           
+            #try:
+            #    self.client = TrezorClient(get_transport(), ui=ui.ClickUI())
+            #except Exception as e:
+            #    print(e)
+            #    raise e
+                
 
     # @author:satoshilabs
     def __waitForDevices(self):
@@ -147,6 +155,7 @@ class TrezorDevice:
         trezor_entropy = misc.get_entropy(self.client, length//2)
         urandom_entropy = os.urandom(length//2)
         entropy = trezor_entropy + urandom_entropy
+        #entropy = os.urandom(length)
         if len(entropy) != length:
             raise ValueError(str(length) + ' bytes entropy expected')
         return entropy
